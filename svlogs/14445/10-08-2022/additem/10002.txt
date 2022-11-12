@@ -1,0 +1,14 @@
+BAG:admin add 1xCapsule Halloween lydo: Mua từ cửa hàng at 10/08/2022 9:41 PM
+BAG:admin add 2xCapsule Halloween (old: 1) lydo: Mua từ cửa hàng at 10/08/2022 9:41 PM
+BAG:admin add 2xCapsule Halloween lydo: Admin at 10/08/2022 10:48 PM
+BAG:admin add 99xCapsule Halloween (old: 2) lydo: Admin at 10/08/2022 10:48 PM
+BAG:admin add 1xĐá Saphia lydo: CSKB at 10/08/2022 10:49 PM
+BAG:admin add 2xĐá Saphia (old: 1) lydo: CSKB at 10/08/2022 10:49 PM
+BAG:admin add 1xÁo vải Pico lydo: CSKB at 10/08/2022 10:49 PM
+BAG:admin add 5xSao pha lê (old: 4) lydo: CSKB at 10/08/2022 10:49 PM
+BAG:admin add 1xĐá thạch anh tím lydo: CSKB at 10/08/2022 10:49 PM
+BAG:admin add 6xSao pha lê (old: 5) lydo: CSKB at 10/08/2022 10:49 PM
+BAG:admin add 1xÁo Kaio lydo: CSKB at 10/08/2022 10:49 PM
+BAG:admin add 5xSao pha lê (old: 4) lydo: CSKB at 10/08/2022 10:49 PM
+BAG:admin add 7xNgọc Rồng 7 sao (old: 6) lydo: CSKB at 10/08/2022 10:49 PM
+BAG:admin add 6xSao pha lê (old: 5) lydo: CSKB at 10/08/2022 10:49 PM
