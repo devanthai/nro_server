@@ -381,7 +381,7 @@ namespace NRO_Server.Application.Main
                     case -113:
                     {
                         var character = _session?.Player?.Character;
-                        if (character == null) return;
+                        if (character == null) return;   
                         var count = 0;
                         while (message.Reader.Available() > 0)
                         {
@@ -395,6 +395,8 @@ namespace NRO_Server.Application.Main
                             }
                         }
 
+                        //update skill khi set onskill
+                        character.CharacterHandler.SendMessage(Service.ChangeOnSkill(character.InfoChar.OSkill));
                         break;
                     }
                     //Status Đệ Tử
@@ -4460,7 +4462,9 @@ namespace NRO_Server.Application.Main
                         character.CharacterHandler.AddItemToBox(false, ItemCache.GetItemDefault(12));
                         character.Skills.Add(new SkillCharacter(gender * 2, gender * 14));
                         character.BoughtSkill.Add(gender != 0 ? gender != 1 ? 87 : 79 : 66);
-                        character.InfoChar.OSkill = new List<sbyte>() {(sbyte) (gender * 2), -1, -1, -1, -1};
+
+
+                        character.InfoChar.OSkill = character.Player.Session.IsNewVersion ? new List<sbyte>() { (sbyte)(gender * 2), -1, -1, -1, -1 - 1, -1, -1, -1, -1 } : new List<sbyte>() { (sbyte)(gender * 2), -1, -1, -1, -1 };
                         character.SpecialSkill = new SpecialSkill(){
                             Id = -1,
                             Info = "Chưa có Nội Tại\nBấm vào để xem chi tiết",
