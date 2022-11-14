@@ -38,17 +38,17 @@ namespace NRO_Server.Application.Handlers.Character
         {
             Character.Player = player;
         }
-        
+
         public void SendMessage(Message message)
         {
             Character?.Player?.Session?.SendMessage(message);
         }
-        
+
         public void SendZoneMessage(Message message)
         {
             Character?.Zone?.ZoneHandler?.SendMessage(message);
         }
-        
+
         public void SendMeMessage(Message message)
         {
             Character?.Zone?.ZoneHandler?.SendMessage(message, Character.Id);
@@ -70,7 +70,7 @@ namespace NRO_Server.Application.Handlers.Character
             {
                 Character.Delay.SaveInvData = 8000 + timeServer;
             }
-            else 
+            else
             {
                 Character.Delay.InvAction = timeServer + 1000;
             }
@@ -105,7 +105,7 @@ namespace NRO_Server.Application.Handlers.Character
         public void Update()
         {
             var timeServer = ServerUtils.CurrentTimeMillis();
-            
+
             // 5p save 1 lần
             if (Character.Delay.SaveInvData < timeServer && !Character.Delay.StartLogout && !Character.Delay.IsSavingInventory)
             {
@@ -118,12 +118,12 @@ namespace NRO_Server.Application.Handlers.Character
                     {
                         ServerUtils.WriteLogBug(Character.Name, Character.Player.Id);
                     }
-                    
+
                     if (CharacterDB.SaveInventory(Character, Character.Delay.NeedToSaveBody, Character.Delay.NeedToSaveBox, Character.Delay.NeedToSaveLucky))
                     {
                         Character.Delay.InvAction = timeServer;
                     }
-                    else 
+                    else
                     {
                         SendMessage(Service.DialogMessage("Đã có lỗi xảy ra khi sao lưu tài khoản của bạn, vui lòng thoát game và đăng nhập lại để tránh mất dữ liệu"));
                     }
@@ -150,7 +150,7 @@ namespace NRO_Server.Application.Handlers.Character
             //     Character.Delay.SaveData = 300000 + timeServer;
             //     Console.WriteLine("Update info char: " + Character.Id);
             // }
-            
+
         }
 
         public void RemoveSkill(long timeServer, bool globalReset = false)
@@ -164,7 +164,7 @@ namespace NRO_Server.Application.Handlers.Character
 
             if (infoSkill.Monkey.MonkeyId == 1 && infoSkill.Monkey.TimeMonkey <= timeServer || globalReset)
             {
-                SkillHandler.HandleMonkey(Character,false);
+                SkillHandler.HandleMonkey(Character, false);
             }
 
             if (infoSkill.Protect.IsProtect && infoSkill.Protect.Time <= timeServer || globalReset)
@@ -189,7 +189,7 @@ namespace NRO_Server.Application.Handlers.Character
                 {
                     SkillHandler.RemoveTroi(Character);
                 }
-                if (monsterMap is {IsDie: true})
+                if (monsterMap is { IsDie: true })
                 {
                     SkillHandler.RemoveTroi(Character);
                 }
@@ -197,7 +197,7 @@ namespace NRO_Server.Application.Handlers.Character
                 {
                     SkillHandler.RemoveTroi(Character);
                 }
-                else if (infoSkill.MeTroi.TimeTroi <= timeServer || monsterMap is {IsDie: true} || charTemp != null && charTemp.InfoChar.IsDie)
+                else if (infoSkill.MeTroi.TimeTroi <= timeServer || monsterMap is { IsDie: true } || charTemp != null && charTemp.InfoChar.IsDie)
                 {
                     SkillHandler.RemoveTroi(Character);
                 }
@@ -210,7 +210,7 @@ namespace NRO_Server.Application.Handlers.Character
                     SendMessage(Service.ItemTime(DataCache.TimeTroi[0], 0));
                     infoSkill.PlayerTroi.PlayerId.ForEach(i => SkillHandler.RemoveTroi(Character.Zone.ZoneHandler.GetCharacter(i)));
                 }
-                else if(infoSkill.PlayerTroi.IsPlayerTroi && infoSkill.PlayerTroi.TimeTroi <= timeServer && infoSkill.PlayerTroi.PlayerId.Count <= 0)
+                else if (infoSkill.PlayerTroi.IsPlayerTroi && infoSkill.PlayerTroi.TimeTroi <= timeServer && infoSkill.PlayerTroi.PlayerId.Count <= 0)
                 {
                     SendMessage(Service.ItemTime(DataCache.TimeTroi[0], 0));
                 }
@@ -266,7 +266,7 @@ namespace NRO_Server.Application.Handlers.Character
             // Vệ tinh trí lực
             if (Character.InfoMore.IsNearAuraTriLucItem && effect.AuraBuffKi30S.Time <= timeServer && Character.InfoChar.Mp < Character.MpFull)
             {
-                PlusMp((int)(Character.MpFull*5/100));
+                PlusMp((int)(Character.MpFull * 5 / 100));
                 SendMessage(Service.SendMp((int)Character.InfoChar.Mp));
                 effect.AuraBuffKi30S.Time = 30000 + timeServer;
                 Character.InfoMore.IsNearAuraTriLucItem = false;
@@ -274,7 +274,7 @@ namespace NRO_Server.Application.Handlers.Character
 
             if (Character.InfoMore.IsNearAuraSinhLucItem && effect.AuraBuffHp30S.Time <= timeServer && Character.InfoChar.Hp < Character.HpFull)
             {
-                PlusHp((int)(Character.HpFull*5/100));
+                PlusHp((int)(Character.HpFull * 5 / 100));
                 SendMessage(Service.SendHp((int)Character.InfoChar.Hp));
                 SendZoneMessage(Service.PlayerLevel(Character));
                 effect.AuraBuffHp30S.Time = 30000 + timeServer;
@@ -302,7 +302,7 @@ namespace NRO_Server.Application.Handlers.Character
             if (Character.InfoMore.LastGiapLuyenTapItemId != 0 && Character.Delay.GiapLuyenTap != -1 && Character.Delay.GiapLuyenTap < timeServer)
             {
                 var giapLuyenTap = GetItemBagById(Character.InfoMore.LastGiapLuyenTapItemId);
-                if (giapLuyenTap != null && ItemCache.ItemIsGiapLuyenTap(giapLuyenTap.Id)) 
+                if (giapLuyenTap != null && ItemCache.ItemIsGiapLuyenTap(giapLuyenTap.Id))
                 {
                     var optionCheck = giapLuyenTap.Options.FirstOrDefault(option => option.Id == 9);
                     if ((optionCheck.Param - 1) > 0)
@@ -311,7 +311,7 @@ namespace NRO_Server.Application.Handlers.Character
                         SendMessage(Service.SendBag(Character));
                         Character.Delay.GiapLuyenTap = 60000 + timeServer;
                     }
-                    else 
+                    else
                     {
                         optionCheck.Param = 0;
                         Character.InfoMore.LastGiapLuyenTapItemId = 0;
@@ -319,8 +319,8 @@ namespace NRO_Server.Application.Handlers.Character
                         UpdateInfo();
                         Character.Delay.GiapLuyenTap = -1;
                     }
-                } 
-                else 
+                }
+                else
                 {
                     Character.InfoMore.LastGiapLuyenTapItemId = 0;
                     Character.Delay.GiapLuyenTap = -1;
@@ -396,7 +396,7 @@ namespace NRO_Server.Application.Handlers.Character
         public void UpdateMask(long timeServer)
         {
             var item = Character.ItemBody[5];
-            if(item == null) return;
+            if (item == null) return;
             /*switch (item.Id)
             {
                 //TODO handle logic for mask
@@ -408,7 +408,7 @@ namespace NRO_Server.Application.Handlers.Character
             var timeServer = ServerUtils.CurrentTimeMillis();
             if (Character.Delay.TrainGiapLuyenTap > timeServer) return;
             var item = Character.ItemBody[6];
-            if(item == null || !ItemCache.ItemIsGiapLuyenTap(item.Id)) return;
+            if (item == null || !ItemCache.ItemIsGiapLuyenTap(item.Id)) return;
             var optionCheck = item.Options.FirstOrDefault(option => option.Id == 9);
             if ((optionCheck.Param + 1) <= ItemCache.GetGiapLuyenTapLimit(item.Id))
             {
@@ -422,7 +422,7 @@ namespace NRO_Server.Application.Handlers.Character
         {
             var fusion = Character.InfoChar.Fusion;
             var disciple = Character.Disciple;
-            if (disciple is {Status: 4} && fusion.IsFusion)
+            if (disciple is { Status: 4 } && fusion.IsFusion)
             {
                 // Update đệ đang hợp thể
                 // if (disciple.InfoSkill.HuytSao.IsHuytSao && disciple.InfoSkill.HuytSao.Time <= timeServer)
@@ -478,7 +478,7 @@ namespace NRO_Server.Application.Handlers.Character
                         Character.InfoChar.Fusion.DelayFusion = timeServer + 600000;
                         Character.InfoChar.Fusion.TimeUse = 0;
                     }
-                    
+
                     disciple.Status = 0;
                     SetUpInfo();
                     SendZoneMessage(Service.UpdateBody(Character));
@@ -503,39 +503,39 @@ namespace NRO_Server.Application.Handlers.Character
             {
                 // Kiểm tra xem có option HSD ngày hoặc giây không
                 var expireOption = item.Options.FirstOrDefault(option => option.Id == 93);
-                if (expireOption != null) 
+                if (expireOption != null)
                 {
                     // Kiểm tra hạn sử dụng
                     var expireTimeOption = item.Options.FirstOrDefault(option => (option.Id == 73));
-                    if (expireTimeOption != null) 
+                    if (expireTimeOption != null)
                     {
                         if (expireTimeOption.Param < timeServer)
                         {
-                            switch(type)
+                            switch (type)
                             {
                                 case 0://body
-                                {
-                                    RemoveItemBody(item.IndexUI);
-                                    break;
-                                }
+                                    {
+                                        RemoveItemBody(item.IndexUI);
+                                        break;
+                                    }
                                 case 1:
-                                {
-                                    RemoveItemBagByIndex(item.IndexUI, item.Quantity, false, reason:"Item hết hạn sử dụng");
-                                    break;
-                                }
+                                    {
+                                        RemoveItemBagByIndex(item.IndexUI, item.Quantity, false, reason: "Item hết hạn sử dụng");
+                                        break;
+                                    }
                                 case 2:
-                                {
-                                    RemoveItemBoxByIndex(item.IndexUI, item.Quantity, false);
-                                    break;
-                                }
+                                    {
+                                        RemoveItemBoxByIndex(item.IndexUI, item.Quantity, false);
+                                        break;
+                                    }
                                 case 3:
-                                {
-                                    RemoveItemLuckyBox(item.IndexUI, false);
-                                    break;
-                                }
+                                    {
+                                        RemoveItemLuckyBox(item.IndexUI, false);
+                                        break;
+                                    }
                             }
                         }
-                        else 
+                        else
                         {
                             // tính ngày từ giây
                             var leftTime = expireTimeOption.Param - timeServer;
@@ -543,24 +543,24 @@ namespace NRO_Server.Application.Handlers.Character
                         }
                     }
                 }
-                else if(type == 1 || type == 2)
+                else if (type == 1 || type == 2)
                 {
                     // Console.WriteLine("bag box: " + item.Id);
                     var expireOption2 = item.Options.FirstOrDefault(option => option.Id == 211);
                     if (expireOption2 != null)
                     {
                         var expireTimeOption = item.Options.FirstOrDefault(option => (option.Id == 73));
-                        if (expireTimeOption != null) 
+                        if (expireTimeOption != null)
                         {
                             if (expireTimeOption.Param < timeServer)
                             {
                                 item.Options.Remove(expireOption2);
                                 item.Options.Remove(expireTimeOption);
                             }
-                            else 
+                            else
                             {
                                 var leftTime = expireTimeOption.Param - timeServer;
-                                expireOption2.Param = (leftTime/3600);
+                                expireOption2.Param = (leftTime / 3600);
                                 Console.WriteLine("expireOption2.Param: " + expireOption2.Param + " giay: " + leftTime);
                             }
                         }
@@ -622,7 +622,7 @@ namespace NRO_Server.Application.Handlers.Character
                         if (item.GetParamOption(72) == 4 && item.GetParamOption(14) > 22)
                         {
                             var option = item.Options.FirstOrDefault(op => op.Id == 14);
-                            if (option != null) 
+                            if (option != null)
                             {
                                 option.Param = 22;
                             }
@@ -630,7 +630,7 @@ namespace NRO_Server.Application.Handlers.Character
                         else if (item.GetParamOption(72) == 5 && item.GetParamOption(14) > 24)
                         {
                             var option = item.Options.FirstOrDefault(op => op.Id == 14);
-                            if (option != null) 
+                            if (option != null)
                             {
                                 option.Param = 24;
                             }
@@ -638,7 +638,7 @@ namespace NRO_Server.Application.Handlers.Character
                         else if (item.GetParamOption(72) == 6 && item.GetParamOption(14) > 27)
                         {
                             var option = item.Options.FirstOrDefault(op => op.Id == 14);
-                            if (option != null) 
+                            if (option != null)
                             {
                                 option.Param = 27;
                             }
@@ -646,7 +646,7 @@ namespace NRO_Server.Application.Handlers.Character
                         else if (item.GetParamOption(72) == 7 && item.GetParamOption(14) > 30)
                         {
                             var option = item.Options.FirstOrDefault(op => op.Id == 14);
-                            if (option != null) 
+                            if (option != null)
                             {
                                 option.Param = 30;
                             }
@@ -654,7 +654,7 @@ namespace NRO_Server.Application.Handlers.Character
                         else if (item.GetParamOption(72) == 8 && item.GetParamOption(14) > 33)
                         {
                             var option = item.Options.FirstOrDefault(op => op.Id == 14);
-                            if (option != null) 
+                            if (option != null)
                             {
                                 option.Param = 33;
                             }
@@ -670,7 +670,7 @@ namespace NRO_Server.Application.Handlers.Character
                         if (item.GetParamOption(72) == 4 && item.GetParamOption(14) > 22)
                         {
                             var option = item.Options.FirstOrDefault(op => op.Id == 14);
-                            if (option != null) 
+                            if (option != null)
                             {
                                 option.Param = 22;
                             }
@@ -678,7 +678,7 @@ namespace NRO_Server.Application.Handlers.Character
                         else if (item.GetParamOption(72) == 5 && item.GetParamOption(14) > 24)
                         {
                             var option = item.Options.FirstOrDefault(op => op.Id == 14);
-                            if (option != null) 
+                            if (option != null)
                             {
                                 option.Param = 24;
                             }
@@ -686,7 +686,7 @@ namespace NRO_Server.Application.Handlers.Character
                         else if (item.GetParamOption(72) == 6 && item.GetParamOption(14) > 27)
                         {
                             var option = item.Options.FirstOrDefault(op => op.Id == 14);
-                            if (option != null) 
+                            if (option != null)
                             {
                                 option.Param = 27;
                             }
@@ -694,7 +694,7 @@ namespace NRO_Server.Application.Handlers.Character
                         else if (item.GetParamOption(72) == 7 && item.GetParamOption(14) > 30)
                         {
                             var option = item.Options.FirstOrDefault(op => op.Id == 14);
-                            if (option != null) 
+                            if (option != null)
                             {
                                 option.Param = 30;
                             }
@@ -702,20 +702,20 @@ namespace NRO_Server.Application.Handlers.Character
                         else if (item.GetParamOption(72) == 8 && item.GetParamOption(14) > 33)
                         {
                             var option = item.Options.FirstOrDefault(op => op.Id == 14);
-                            if (option != null) 
+                            if (option != null)
                             {
                                 option.Param = 33;
                             }
                         }
                     }
                 });
-                
+
             }
             catch (Exception)
             {
-                
+
             }
-            
+
             // Kiểm tra vàng nhiều
             //Check đệ tử
             if (Character.InfoChar.IsHavePet)
@@ -725,7 +725,7 @@ namespace NRO_Server.Application.Handlers.Character
                 {
                     Character.Disciple.Character = Character;
                     Character.Disciple.Player = Character.Player;
-                    Character.Disciple.CharacterHandler.SetUpPosition(isRandom:true);
+                    Character.Disciple.CharacterHandler.SetUpPosition(isRandom: true);
                 }
                 else
                 {
@@ -742,16 +742,16 @@ namespace NRO_Server.Application.Handlers.Character
                 {
                     var pet = new Pet(PetItemIndex.Id, Character);
                     Character.Pet = pet;
-                    Character.Pet.CharacterHandler.SetUpPosition(isRandom:true);
+                    Character.Pet.CharacterHandler.SetUpPosition(isRandom: true);
                     Character.InfoMore.PetItemIndex = PetItemIndex.IndexUI;
-                } 
-                else 
+                }
+                else
                 {//Không tìm thấy pet
                     Character.InfoChar.PetId = -1;
                     Character.InfoChar.PetImei = -1;
                     Character.InfoMore.PetItemIndex = -1;
                 }
-            
+
             }
 
             if (Character.ClanId == -1)
@@ -774,9 +774,9 @@ namespace NRO_Server.Application.Handlers.Character
 
             if (Character.InfoChar.OSkill.Count == 0)
             {
-                Character.InfoChar.OSkill = Character.Player.Session.IsNewVersion ? new List<sbyte>() { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 } : new List<sbyte>() { -1, -1, -1, -1, -1 };    
+                Character.InfoChar.OSkill = Character.Player.Session.IsNewVersion ? new List<sbyte>() { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 } : new List<sbyte>() { -1, -1, -1, -1, -1 };
             }
-            else if(Character.InfoChar.OSkill.Count <= 5 && Character.Player.Session.IsNewVersion) //Version mới thì thêm 5 ô skill nữa
+            else if (Character.InfoChar.OSkill.Count <= 5 && Character.Player.Session.IsNewVersion) //Version mới thì thêm 5 ô skill nữa
             {
                 Character.InfoChar.OSkill.Add(-1);
                 Character.InfoChar.OSkill.Add(-1);
@@ -784,7 +784,7 @@ namespace NRO_Server.Application.Handlers.Character
                 Character.InfoChar.OSkill.Add(-1);
                 Character.InfoChar.OSkill.Add(-1);
             }
-          
+
 
             if (Character.InfoChar.KSkill.Count == 0)
             {
@@ -799,7 +799,7 @@ namespace NRO_Server.Application.Handlers.Character
                 Character.InfoChar.KSkill.Add(-1);
             }
 
-            var maxPower = Cache.Gi().LIMIT_POWERS[DataCache.MAX_LIMIT_POWER_LEVEL-1].Power;
+            var maxPower = Cache.Gi().LIMIT_POWERS[DataCache.MAX_LIMIT_POWER_LEVEL - 1].Power;
             if (Character.InfoChar.Power > maxPower)
             {
                 Character.InfoChar.Power = maxPower;
@@ -812,13 +812,13 @@ namespace NRO_Server.Application.Handlers.Character
             {
                 Character.InfoChar.IsPower = true;
             }
-            else 
+            else
             {
                 Character.InfoChar.IsPower = false;
             }
-            
-            SetUpInfo(); 
-            if(Character.InfoChar.PhukienPart == -1) SendMessage(Service.SendImageBag(Character.Id, Character.InfoChar.Bag));
+
+            SetUpInfo();
+            if (Character.InfoChar.PhukienPart == -1) SendMessage(Service.SendImageBag(Character.Id, Character.InfoChar.Bag));
             SendZoneMessage(Service.PlayerLoadAll(Character));
             SendMessage(Service.SendBox(Character));
             SendMessage(Service.SendBag(Character));
@@ -838,11 +838,11 @@ namespace NRO_Server.Application.Handlers.Character
 
             if (Character.InfoChar.IsHavePet && Character.Disciple != null)
             {
-                SendMessage(Service.Disciple(1, null));  
+                SendMessage(Service.Disciple(1, null));
             }
             else
             {
-                SendMessage(Service.Disciple(0, null)); 
+                SendMessage(Service.Disciple(0, null));
             }
             UpdateMountId();
             UpdatePhukien();
@@ -874,7 +874,7 @@ namespace NRO_Server.Application.Handlers.Character
                 SendZoneMessage(Service.PlayerDie(Character));
                 LeaveGold();
                 if (!Character.Trade.IsTrade) return;
-                var charTemp = (Model.Character.Character) Character.Zone.ZoneHandler.GetCharacter(Character.Trade.CharacterId);
+                var charTemp = (Model.Character.Character)Character.Zone.ZoneHandler.GetCharacter(Character.Trade.CharacterId);
                 if (charTemp != null && charTemp.Trade.CharacterId == Character.Id)
                 {
                     charTemp.CloseTrade(true);
@@ -1057,7 +1057,7 @@ namespace NRO_Server.Application.Handlers.Character
                     }
                 }
             });
-            
+
             var itemBag = Character.ItemBag.FirstOrDefault(item => ItemCache.ItemTemplate(item.Id).Type == 11);
             if (itemBag != null) param.Add(itemBag.GetParamOption(id));
 
@@ -1096,7 +1096,7 @@ namespace NRO_Server.Application.Handlers.Character
             SetBuffHp10s();
             SetBuffHp30s();
             SetTuDongLuyenTap();
-            SetEnhancedOption();            
+            SetEnhancedOption();
             SetInfoBuff();
         }
 
@@ -1109,12 +1109,12 @@ namespace NRO_Server.Application.Handlers.Character
                 {
                     Character.InfoMore.PetItemIndex = PetItemIndex.IndexUI;
                 }
-                else 
+                else
                 {
                     Character.InfoMore.PetItemIndex = -1;
                 }
             }
-            else 
+            else
             {
                 Character.InfoMore.PetItemIndex = -1;
             }
@@ -1137,179 +1137,179 @@ namespace NRO_Server.Application.Handlers.Character
             switch (Character.InfoChar.Gender)
             {
                 case 0:
-                {
-                    if (Character.ItemBody[0] != null)
                     {
-                        // IsFullSetKirin = false;
-                        // IsFullSetSongoku = false;
-                        // IsFullSetThienXingHang = false;
-                        var getSetTXH = Character.ItemBody[0].Options.FirstOrDefault(option => option.Id == 127);
-
-                        if (getSetTXH != null)
+                        if (Character.ItemBody[0] != null)
                         {
-                            Character.InfoSet.IsFullSetThienXinHang = true;
-                            for (int i = 1; i < 5; i++)
+                            // IsFullSetKirin = false;
+                            // IsFullSetSongoku = false;
+                            // IsFullSetThienXingHang = false;
+                            var getSetTXH = Character.ItemBody[0].Options.FirstOrDefault(option => option.Id == 127);
+
+                            if (getSetTXH != null)
                             {
-                                if (Character.ItemBody[i] == null || Character.ItemBody[i].Options.FirstOrDefault(option => option.Id == 127) == null)
+                                Character.InfoSet.IsFullSetThienXinHang = true;
+                                for (int i = 1; i < 5; i++)
                                 {
-                                    Character.InfoSet.IsFullSetThienXinHang = false;
-                                    break;
+                                    if (Character.ItemBody[i] == null || Character.ItemBody[i].Options.FirstOrDefault(option => option.Id == 127) == null)
+                                    {
+                                        Character.InfoSet.IsFullSetThienXinHang = false;
+                                        break;
+                                    }
                                 }
+                                return;
                             }
-                            return;
-                        }
 
-                        var getSetKirin = Character.ItemBody[0].Options.FirstOrDefault(option => option.Id == 128);
+                            var getSetKirin = Character.ItemBody[0].Options.FirstOrDefault(option => option.Id == 128);
 
-                        if (getSetKirin != null)
-                        {
-                            Character.InfoSet.IsFullSetKirin = true;
-                            for (int i = 1; i < 5; i++)
+                            if (getSetKirin != null)
                             {
-                                if (Character.ItemBody[i] == null || Character.ItemBody[i].Options.FirstOrDefault(option => option.Id == 128) == null)
+                                Character.InfoSet.IsFullSetKirin = true;
+                                for (int i = 1; i < 5; i++)
                                 {
-                                    Character.InfoSet.IsFullSetKirin = false;
-                                    break;
+                                    if (Character.ItemBody[i] == null || Character.ItemBody[i].Options.FirstOrDefault(option => option.Id == 128) == null)
+                                    {
+                                        Character.InfoSet.IsFullSetKirin = false;
+                                        break;
+                                    }
                                 }
+                                return;
                             }
-                            return;
-                        }
 
-                        var getSetSGK = Character.ItemBody[0].Options.FirstOrDefault(option => option.Id == 129);
+                            var getSetSGK = Character.ItemBody[0].Options.FirstOrDefault(option => option.Id == 129);
 
-                        if (getSetSGK != null)
-                        {
-                            Character.InfoSet.IsFullSetSongoku = true;
-                            for (int i = 1; i < 5; i++)
+                            if (getSetSGK != null)
                             {
-                                if (Character.ItemBody[i] == null || Character.ItemBody[i].Options.FirstOrDefault(option => option.Id == 129) == null)
+                                Character.InfoSet.IsFullSetSongoku = true;
+                                for (int i = 1; i < 5; i++)
                                 {
-                                    Character.InfoSet.IsFullSetSongoku = false;
-                                    break;
+                                    if (Character.ItemBody[i] == null || Character.ItemBody[i].Options.FirstOrDefault(option => option.Id == 129) == null)
+                                    {
+                                        Character.InfoSet.IsFullSetSongoku = false;
+                                        break;
+                                    }
                                 }
+                                return;
                             }
-                            return;
-                        }
 
+                        }
+                        break;
                     }
-                    break;
-                }
                 case 1:
-                {
-                    if (Character.ItemBody[0] != null)
                     {
-                        // IsFullSetKirin = false;
-                        // IsFullSetSongoku = false;
-                        // IsFullSetThienXingHang = false;
-                        var getSetPicolo = Character.ItemBody[0].Options.FirstOrDefault(option => option.Id == 130);
-
-                        if (getSetPicolo != null)
+                        if (Character.ItemBody[0] != null)
                         {
-                            Character.InfoSet.IsFullSetPicolo = true;
-                            for (int i = 1; i < 5; i++)
+                            // IsFullSetKirin = false;
+                            // IsFullSetSongoku = false;
+                            // IsFullSetThienXingHang = false;
+                            var getSetPicolo = Character.ItemBody[0].Options.FirstOrDefault(option => option.Id == 130);
+
+                            if (getSetPicolo != null)
                             {
-                                if (Character.ItemBody[i] == null || Character.ItemBody[i].Options.FirstOrDefault(option => option.Id == 130) == null)
+                                Character.InfoSet.IsFullSetPicolo = true;
+                                for (int i = 1; i < 5; i++)
                                 {
-                                    Character.InfoSet.IsFullSetPicolo = false;
-                                    break;
+                                    if (Character.ItemBody[i] == null || Character.ItemBody[i].Options.FirstOrDefault(option => option.Id == 130) == null)
+                                    {
+                                        Character.InfoSet.IsFullSetPicolo = false;
+                                        break;
+                                    }
                                 }
+                                return;
                             }
-                            return;
-                        }
 
-                        var getSetOcTieu = Character.ItemBody[0].Options.FirstOrDefault(option => option.Id == 131);
+                            var getSetOcTieu = Character.ItemBody[0].Options.FirstOrDefault(option => option.Id == 131);
 
-                        if (getSetOcTieu != null)
-                        {
-                            Character.InfoSet.IsFullSetOcTieu = true;
-                            for (int i = 1; i < 5; i++)
+                            if (getSetOcTieu != null)
                             {
-                                if (Character.ItemBody[i] == null || Character.ItemBody[i].Options.FirstOrDefault(option => option.Id == 131) == null)
+                                Character.InfoSet.IsFullSetOcTieu = true;
+                                for (int i = 1; i < 5; i++)
                                 {
-                                    Character.InfoSet.IsFullSetOcTieu = false;
-                                    break;
+                                    if (Character.ItemBody[i] == null || Character.ItemBody[i].Options.FirstOrDefault(option => option.Id == 131) == null)
+                                    {
+                                        Character.InfoSet.IsFullSetOcTieu = false;
+                                        break;
+                                    }
                                 }
+                                return;
                             }
-                            return;
-                        }
 
-                        var getSetPikkoro = Character.ItemBody[0].Options.FirstOrDefault(option => option.Id == 132);
+                            var getSetPikkoro = Character.ItemBody[0].Options.FirstOrDefault(option => option.Id == 132);
 
-                        if (getSetPikkoro != null)
-                        {
-                            Character.InfoSet.IsFullSetPikkoro = true;
-                            for (int i = 1; i < 5; i++)
+                            if (getSetPikkoro != null)
                             {
-                                if (Character.ItemBody[i] == null || Character.ItemBody[i].Options.FirstOrDefault(option => option.Id == 132) == null)
+                                Character.InfoSet.IsFullSetPikkoro = true;
+                                for (int i = 1; i < 5; i++)
                                 {
-                                    Character.InfoSet.IsFullSetPikkoro = false;
-                                    break;
+                                    if (Character.ItemBody[i] == null || Character.ItemBody[i].Options.FirstOrDefault(option => option.Id == 132) == null)
+                                    {
+                                        Character.InfoSet.IsFullSetPikkoro = false;
+                                        break;
+                                    }
                                 }
+                                return;
                             }
-                            return;
-                        }
 
+                        }
+                        break;
                     }
-                    break;
-                }
                 case 2:
-                {
-                    if (Character.ItemBody[0] != null)
                     {
-                        // IsFullSetKirin = false;
-                        // IsFullSetSongoku = false;
-                        // IsFullSetThienXingHang = false;
-                        var getSetKakarot = Character.ItemBody[0].Options.FirstOrDefault(option => option.Id == 133);
-
-                        if (getSetKakarot != null)
+                        if (Character.ItemBody[0] != null)
                         {
-                            Character.InfoSet.IsFullSetKakarot = true;
-                            for (int i = 1; i < 5; i++)
+                            // IsFullSetKirin = false;
+                            // IsFullSetSongoku = false;
+                            // IsFullSetThienXingHang = false;
+                            var getSetKakarot = Character.ItemBody[0].Options.FirstOrDefault(option => option.Id == 133);
+
+                            if (getSetKakarot != null)
                             {
-                                if (Character.ItemBody[i] == null || Character.ItemBody[i].Options.FirstOrDefault(option => option.Id == 133) == null)
+                                Character.InfoSet.IsFullSetKakarot = true;
+                                for (int i = 1; i < 5; i++)
                                 {
-                                    Character.InfoSet.IsFullSetKakarot = false;
-                                    break;
+                                    if (Character.ItemBody[i] == null || Character.ItemBody[i].Options.FirstOrDefault(option => option.Id == 133) == null)
+                                    {
+                                        Character.InfoSet.IsFullSetKakarot = false;
+                                        break;
+                                    }
                                 }
+                                return;
                             }
-                            return;
-                        }
 
-                        var getSetCadic = Character.ItemBody[0].Options.FirstOrDefault(option => option.Id == 134);
+                            var getSetCadic = Character.ItemBody[0].Options.FirstOrDefault(option => option.Id == 134);
 
-                        if (getSetCadic != null)
-                        {
-                            Character.InfoSet.IsFullSetCadic = true;
-                            for (int i = 1; i < 5; i++)
+                            if (getSetCadic != null)
                             {
-                                if (Character.ItemBody[i] == null || Character.ItemBody[i].Options.FirstOrDefault(option => option.Id == 134) == null)
+                                Character.InfoSet.IsFullSetCadic = true;
+                                for (int i = 1; i < 5; i++)
                                 {
-                                    Character.InfoSet.IsFullSetCadic = false;
-                                    break;
+                                    if (Character.ItemBody[i] == null || Character.ItemBody[i].Options.FirstOrDefault(option => option.Id == 134) == null)
+                                    {
+                                        Character.InfoSet.IsFullSetCadic = false;
+                                        break;
+                                    }
                                 }
+                                return;
                             }
-                            return;
-                        }
 
-                        var getSetNappa = Character.ItemBody[0].Options.FirstOrDefault(option => option.Id == 135);
+                            var getSetNappa = Character.ItemBody[0].Options.FirstOrDefault(option => option.Id == 135);
 
-                        if (getSetNappa != null)
-                        {
-                            Character.InfoSet.IsFullSetNappa = true;
-                            for (int i = 1; i < 5; i++)
+                            if (getSetNappa != null)
                             {
-                                if (Character.ItemBody[i] == null || Character.ItemBody[i].Options.FirstOrDefault(option => option.Id == 135) == null)
+                                Character.InfoSet.IsFullSetNappa = true;
+                                for (int i = 1; i < 5; i++)
                                 {
-                                    Character.InfoSet.IsFullSetNappa = false;
-                                    break;
+                                    if (Character.ItemBody[i] == null || Character.ItemBody[i].Options.FirstOrDefault(option => option.Id == 135) == null)
+                                    {
+                                        Character.InfoSet.IsFullSetNappa = false;
+                                        break;
+                                    }
                                 }
+                                return;
                             }
-                            return;
-                        }
 
+                        }
+                        break;
                     }
-                    break;
-                }
             }
         }
 
@@ -1321,7 +1321,7 @@ namespace NRO_Server.Application.Handlers.Character
             // Effect thức ăn
             if (Character.InfoBuff.ThucAnTime > timeServer && Character.InfoBuff.ThucAnId != -1)
             {
-                var giayConLai = (Character.InfoBuff.ThucAnTime - timeServer)/1000;
+                var giayConLai = (Character.InfoBuff.ThucAnTime - timeServer) / 1000;
                 if (giayConLai <= 0) giayConLai = 0;
                 var template = ItemCache.ItemTemplate(Character.InfoBuff.ThucAnId);
                 SendMessage(Service.ItemTime(template.IconId, (int)giayConLai));
@@ -1329,7 +1329,7 @@ namespace NRO_Server.Application.Handlers.Character
             // Effect banh trung thu
             if (Character.InfoBuff.BanhTrungThuTime > timeServer && Character.InfoBuff.BanhTrungThuId != -1)
             {
-                var giayConLai = (Character.InfoBuff.BanhTrungThuTime - timeServer)/1000;
+                var giayConLai = (Character.InfoBuff.BanhTrungThuTime - timeServer) / 1000;
                 if (giayConLai <= 0) giayConLai = 0;
                 var template = ItemCache.ItemTemplate(Character.InfoBuff.BanhTrungThuId);
                 SendMessage(Service.ItemTime(template.IconId, (int)giayConLai));
@@ -1337,49 +1337,49 @@ namespace NRO_Server.Application.Handlers.Character
             // Effect cuồng nộ
             if (Character.InfoBuff.CuongNoTime > timeServer)
             {
-                var giayConLai = (Character.InfoBuff.CuongNoTime - timeServer)/1000;
+                var giayConLai = (Character.InfoBuff.CuongNoTime - timeServer) / 1000;
                 if (giayConLai <= 0) giayConLai = 0;
                 SendMessage(Service.ItemTime(2754, (int)giayConLai));
             }
             // Effect Bổ huyết
             if (Character.InfoBuff.BoHuyetTime > timeServer)
             {
-                var giayConLai = (Character.InfoBuff.BoHuyetTime - timeServer)/1000;
+                var giayConLai = (Character.InfoBuff.BoHuyetTime - timeServer) / 1000;
                 if (giayConLai <= 0) giayConLai = 0;
                 SendMessage(Service.ItemTime(2755, (int)giayConLai));
             }
             // Effect Bo Khi
             if (Character.InfoBuff.BoKhiTime > timeServer)
             {
-                var giayConLai = (Character.InfoBuff.BoKhiTime - timeServer)/1000;
+                var giayConLai = (Character.InfoBuff.BoKhiTime - timeServer) / 1000;
                 if (giayConLai <= 0) giayConLai = 0;
                 SendMessage(Service.ItemTime(2756, (int)giayConLai));
             }
             // Effect giap xen
             if (Character.InfoBuff.GiapXenTime > timeServer)
             {
-                var giayConLai = (Character.InfoBuff.GiapXenTime - timeServer)/1000;
+                var giayConLai = (Character.InfoBuff.GiapXenTime - timeServer) / 1000;
                 if (giayConLai <= 0) giayConLai = 0;
                 SendMessage(Service.ItemTime(2757, (int)giayConLai));
             }
             // Effect An danh
             if (Character.InfoBuff.AnDanhTime > timeServer)
             {
-                var giayConLai = (Character.InfoBuff.AnDanhTime - timeServer)/1000;
+                var giayConLai = (Character.InfoBuff.AnDanhTime - timeServer) / 1000;
                 if (giayConLai <= 0) giayConLai = 0;
                 SendMessage(Service.ItemTime(2760, (int)giayConLai));
             }
             // Effect Do CSKB
             if (Character.InfoBuff.MayDoCSKBTime > timeServer)
             {
-                var giayConLai = (Character.InfoBuff.MayDoCSKBTime - timeServer)/1000;
+                var giayConLai = (Character.InfoBuff.MayDoCSKBTime - timeServer) / 1000;
                 if (giayConLai <= 0) giayConLai = 0;
                 SendMessage(Service.ItemTime(2758, (int)giayConLai));
             }
             // Effect Cu Ca Rot
             if (Character.InfoBuff.CuCarotTime > timeServer)
             {
-                var giayConLai = (Character.InfoBuff.CuCarotTime - timeServer)/1000;
+                var giayConLai = (Character.InfoBuff.CuCarotTime - timeServer) / 1000;
                 if (giayConLai <= 0) giayConLai = 0;
                 SendMessage(Service.ItemTime(4082, (int)giayConLai));
             }
@@ -1407,7 +1407,7 @@ namespace NRO_Server.Application.Handlers.Character
             var timeServer = ServerUtils.CurrentTimeMillis();
             if (Character.InfoChar.TimeAutoPlay > 0)
             {
-                var giayConLai = (Character.InfoChar.TimeAutoPlay - timeServer)/1000;
+                var giayConLai = (Character.InfoChar.TimeAutoPlay - timeServer) / 1000;
                 if (giayConLai <= 0) giayConLai = 0;
                 SendMessage(Service.ItemTime(4387, (int)giayConLai));
                 SendMessage(Service.AutoPlay(true));
@@ -1421,16 +1421,17 @@ namespace NRO_Server.Application.Handlers.Character
             hp += GetParamItem(6);
             hp += GetParamItem(22) * 1000;
             hp += GetParamItem(48);
-            GetListParamItem(77).ForEach(param => hp += hp*param/100);
-            GetListParamItem(109).ForEach(param => hp -= hp*param/100);  
+            GetListParamItem(77).ForEach(param => hp += hp * param / 100);
+            GetListParamItem(109).ForEach(param => hp -= hp * param / 100);
 
-            if (Character.InfoChar.Fusion.IsFusion && Character.Disciple != null) {
+            if (Character.InfoChar.Fusion.IsFusion && Character.Disciple != null)
+            {
                 // Đệ ma bư +120%
                 var disHP = Character.Disciple.HpFull;
 
                 if (Character.Disciple.Type == 2)
                 {
-                    hp += (disHP + (disHP*20/100));
+                    hp += (disHP + (disHP * 20 / 100));
                 }
                 // Đệ thường +100%
                 else if (Character.Disciple.Type == 1)
@@ -1446,26 +1447,26 @@ namespace NRO_Server.Application.Handlers.Character
                         var optionCheck = bongTaiPorata2.Options.FirstOrDefault(option => option.Id != 72);
                         if (optionCheck != null && optionCheck.Id == 77)
                         {
-                            hp += hp*optionCheck.Param/100;
+                            hp += hp * optionCheck.Param / 100;
                         }
                     }
                     // bông tai pt2 tăng 10%
-                    hp += hp*10/100;
+                    hp += hp * 10 / 100;
                 }
             }
 
             // Nappa
             if (Character.InfoSet.IsFullSetNappa)
             {
-                hp += hp*80/100;
+                hp += hp * 80 / 100;
             }
 
-            if (Character.InfoSkill.Monkey.MonkeyId != 0) 
+            if (Character.InfoSkill.Monkey.MonkeyId != 0)
             {
                 hp += hp * Character.InfoSkill.Monkey.Hp / 100;
             }
 
-            if (Character.InfoSkill.HuytSao.IsHuytSao) 
+            if (Character.InfoSkill.HuytSao.IsHuytSao)
             {
                 hp += hp * Character.InfoSkill.HuytSao.Percent / 100;
             }
@@ -1480,28 +1481,28 @@ namespace NRO_Server.Application.Handlers.Character
                 switch (Character.InfoBuff.BanhTrungThuId)
                 {
                     case 465:
-                    {
-                        hp += hp*5/100;
-                        break;
-                    }
+                        {
+                            hp += hp * 5 / 100;
+                            break;
+                        }
                     case 466:
-                    {
-                        hp += hp*10/100;
-                        break;
-                    }
+                        {
+                            hp += hp * 10 / 100;
+                            break;
+                        }
                     case 472:
-                    {
-                        hp += hp*15/100;
-                        break;
-                    }
+                        {
+                            hp += hp * 15 / 100;
+                            break;
+                        }
                     case 473:
-                    {
-                        hp += hp*20/100;
-                        break;
-                    }
+                        {
+                            hp += hp * 20 / 100;
+                            break;
+                        }
                 }
             }
-            
+
 
             Character.HpFull = hp;
         }
@@ -1513,13 +1514,14 @@ namespace NRO_Server.Application.Handlers.Character
             mp += GetParamItem(7);
             mp += GetParamItem(23) * 1000;
             mp += GetParamItem(48);
-            GetListParamItem(103).ForEach(param => mp += mp*param/100);
+            GetListParamItem(103).ForEach(param => mp += mp * param / 100);
 
-            if (Character.InfoChar.Fusion.IsFusion && Character.Disciple != null) {
+            if (Character.InfoChar.Fusion.IsFusion && Character.Disciple != null)
+            {
                 // Đệ ma bư +120%
                 if (Character.Disciple.Type == 2)
                 {
-                    mp += (Character.Disciple.MpFull + (Character.Disciple.MpFull*20/100));
+                    mp += (Character.Disciple.MpFull + (Character.Disciple.MpFull * 20 / 100));
                 }
                 // Đệ thường +100%
                 else if (Character.Disciple.Type == 1)
@@ -1535,11 +1537,11 @@ namespace NRO_Server.Application.Handlers.Character
                         var optionCheck = bongTaiPorata2.Options.FirstOrDefault(option => option.Id != 72);
                         if (optionCheck != null && optionCheck.Id == 103)
                         {
-                            mp += mp*optionCheck.Param/100;
+                            mp += mp * optionCheck.Param / 100;
                         }
                     }
 
-                    mp += mp*10/100;
+                    mp += mp * 10 / 100;
                 }
             }
 
@@ -1548,25 +1550,25 @@ namespace NRO_Server.Application.Handlers.Character
                 switch (Character.InfoBuff.BanhTrungThuId)
                 {
                     case 465:
-                    {
-                        mp += mp*5/100;
-                        break;
-                    }
+                        {
+                            mp += mp * 5 / 100;
+                            break;
+                        }
                     case 466:
-                    {
-                        mp += mp*10/100;
-                        break;
-                    }
+                        {
+                            mp += mp * 10 / 100;
+                            break;
+                        }
                     case 472:
-                    {
-                        mp += mp*15/100;
-                        break;
-                    }
+                        {
+                            mp += mp * 15 / 100;
+                            break;
+                        }
                     case 473:
-                    {
-                        mp += mp*20/100;
-                        break;
-                    }
+                        {
+                            mp += mp * 20 / 100;
+                            break;
+                        }
                 }
             }
 
@@ -1582,16 +1584,17 @@ namespace NRO_Server.Application.Handlers.Character
         {
             var damage = Character.InfoChar.OriginalDamage;
             damage += GetParamItem(0);
-            GetListParamItem(50).ForEach(param => damage += damage*param/100);
-            GetListParamItem(147).ForEach(param => damage += damage*param/100);          
+            GetListParamItem(50).ForEach(param => damage += damage * param / 100);
+            GetListParamItem(147).ForEach(param => damage += damage * param / 100);
 
-            if (Character.InfoChar.Fusion.IsFusion && Character.Disciple != null) {
+            if (Character.InfoChar.Fusion.IsFusion && Character.Disciple != null)
+            {
                 // Đệ ma bư +120%
                 var disDmg = Character.Disciple.DamageFull;
 
                 if (Character.Disciple.Type == 2)
                 {
-                    damage += (disDmg + (disDmg*20/100));
+                    damage += (disDmg + (disDmg * 20 / 100));
                 }
                 // Đệ thường +100%
                 else if (Character.Disciple.Type == 1)
@@ -1607,11 +1610,11 @@ namespace NRO_Server.Application.Handlers.Character
                         var optionCheck = bongTaiPorata2.Options.FirstOrDefault(option => option.Id != 72);
                         if (optionCheck != null && optionCheck.Id == 50)
                         {
-                            damage += damage*optionCheck.Param/100;
+                            damage += damage * optionCheck.Param / 100;
                         }
                     }
 
-                    damage += damage*10/100;
+                    damage += damage * 10 / 100;
                 }
             }
 
@@ -1621,14 +1624,14 @@ namespace NRO_Server.Application.Handlers.Character
             {
                 damage += damage;
             }
-            
+
             // Kiểm tra có mặc giáp luyện tập hay không
             var itemGiap = Character.ItemBody[6];
-            if(itemGiap != null && ItemCache.ItemIsGiapLuyenTap(itemGiap.Id))
+            if (itemGiap != null && ItemCache.ItemIsGiapLuyenTap(itemGiap.Id))
             {
-                damage -= (damage*ItemCache.GetGiapLuyenTapPTSucManh(itemGiap.Id))/100;
+                damage -= (damage * ItemCache.GetGiapLuyenTapPTSucManh(itemGiap.Id)) / 100;
             }
-            
+
             // Kiểm tra xem có vừa tháo giáp tập luyện ra không
             if (Character.InfoMore.LastGiapLuyenTapItemId != 0)
             {
@@ -1638,10 +1641,10 @@ namespace NRO_Server.Application.Handlers.Character
                     var optionCheck = giapLuyenTap.Options.FirstOrDefault(option => option.Id == 9);
                     if (optionCheck.Param > 0)
                     {
-                        damage += (damage*ItemCache.GetGiapLuyenTapPTSucManh(giapLuyenTap.Id))/100;
+                        damage += (damage * ItemCache.GetGiapLuyenTapPTSucManh(giapLuyenTap.Id)) / 100;
                     }
                 }
-                else 
+                else
                 {
                     Character.InfoMore.LastGiapLuyenTapItemId = 0;
                     Character.Delay.GiapLuyenTap = -1;
@@ -1651,7 +1654,7 @@ namespace NRO_Server.Application.Handlers.Character
             // Thức ăn
             if (Character.InfoBuff.ThucAnId != -1)
             {
-                damage += damage*10/100;
+                damage += damage * 10 / 100;
             }
 
             if (Character.InfoBuff.BanhTrungThuId != -1)
@@ -1659,25 +1662,25 @@ namespace NRO_Server.Application.Handlers.Character
                 switch (Character.InfoBuff.BanhTrungThuId)
                 {
                     case 465:
-                    {
-                        damage += damage*10/100;
-                        break;
-                    }
+                        {
+                            damage += damage * 10 / 100;
+                            break;
+                        }
                     case 466:
-                    {
-                        damage += damage*15/100;
-                        break;
-                    }
+                        {
+                            damage += damage * 15 / 100;
+                            break;
+                        }
                     case 472:
-                    {
-                        damage += damage*20/100;
-                        break;
-                    }
+                        {
+                            damage += damage * 20 / 100;
+                            break;
+                        }
                     case 473:
-                    {
-                        damage += damage*25/100;
-                        break;
-                    }
+                        {
+                            damage += damage * 25 / 100;
+                            break;
+                        }
                 }
             }
             Character.DamageFull = damage;
@@ -1687,9 +1690,10 @@ namespace NRO_Server.Application.Handlers.Character
         {
             var defence = Character.InfoChar.OriginalDefence * 4;
             defence += GetParamItem(47);
-            GetListParamItem(94).ForEach(param => defence += defence*param/100);
+            GetListParamItem(94).ForEach(param => defence += defence * param / 100);
 
-            if (Character.InfoChar.Fusion.IsFusion && Character.Disciple != null) {
+            if (Character.InfoChar.Fusion.IsFusion && Character.Disciple != null)
+            {
                 // Bông tai porata 2
                 if (Character.InfoChar.Fusion.IsPorata2)
                 {
@@ -1699,11 +1703,11 @@ namespace NRO_Server.Application.Handlers.Character
                         var optionCheck = bongTaiPorata2.Options.FirstOrDefault(option => option.Id != 72);
                         if (optionCheck != null && optionCheck.Id == 94)
                         {
-                            defence += defence*optionCheck.Param/100;
+                            defence += defence * optionCheck.Param / 100;
                         }
                     }
 
-                    defence += defence*10/100;
+                    defence += defence * 10 / 100;
                 }
             }
             Character.DefenceFull = Math.Abs(defence);
@@ -1722,7 +1726,8 @@ namespace NRO_Server.Application.Handlers.Character
                 crtCal += GetParamItem(14);
             }
 
-            if (Character.InfoChar.Fusion.IsFusion && Character.Disciple != null) {
+            if (Character.InfoChar.Fusion.IsFusion && Character.Disciple != null)
+            {
                 // Bông tai porata 2
                 if (Character.InfoChar.Fusion.IsPorata2)
                 {
@@ -1763,14 +1768,14 @@ namespace NRO_Server.Application.Handlers.Character
             switch (plus)
             {
                 case <= 1:
-                    speed+=1;
+                    speed += 1;
                     break;
                 case > 1 and <= 2:
                     speed += 2;
                     break;
-                // case > 2:
-                //     speed += plus;
-                //     break;
+                    // case > 2:
+                    //     speed += plus;
+                    //     break;
             }
             Character.InfoChar.Speed = (sbyte)speed;
         }
@@ -1783,12 +1788,12 @@ namespace NRO_Server.Application.Handlers.Character
             {
                 Character.Effect.BuffHp30S.Time = 30000 + ServerUtils.CurrentTimeMillis();
             }
-            
+
         }
 
         public void SetBuffMp1s()
         {
-            var mpPlus = (int)Character.MpFull * GetParamItem(162)/100;
+            var mpPlus = (int)Character.MpFull * GetParamItem(162) / 100;
             Character.Effect.BuffKi1s.Value = mpPlus;
             if (Character.Effect.BuffKi1s.Time == -1)
             {
@@ -1881,7 +1886,7 @@ namespace NRO_Server.Application.Handlers.Character
                         if (infoSkill.MeTroi.Monster != null)
                         {
                             SendMessage(Service.SkillEffectMonster(c.Id, infoSkill.MeTroi.Monster.IdMap, 1, 32));
-                        } 
+                        }
                     }
 
                     if (infoSkill.PlayerTroi.IsPlayerTroi)
@@ -1927,7 +1932,7 @@ namespace NRO_Server.Application.Handlers.Character
                         if (infoSkill.MeTroi.Monster != null)
                         {
                             SendMessage(Service.SkillEffectMonster(disciplesValue.Id, infoSkill.MeTroi.Monster.IdMap, 1, 32));
-                        } 
+                        }
                     }
 
                     if (infoSkill.PlayerTroi.IsPlayerTroi)
@@ -1981,7 +1986,7 @@ namespace NRO_Server.Application.Handlers.Character
                         if (infoSkill.MeTroi.Monster != null)
                         {
                             SendMessage(Service.SkillEffectMonster(bossesValue.Id, infoSkill.MeTroi.Monster.IdMap, 1, 32));
-                        } 
+                        }
                     }
 
                     if (infoSkill.PlayerTroi.IsPlayerTroi)
@@ -2016,10 +2021,10 @@ namespace NRO_Server.Application.Handlers.Character
 
             lock (zone.MonsterPets)
             {
-                zone.MonsterPets.Values.Where(m => m is {IsDie: false} && m.IdMap != Character.Id).ToList().ForEach(m =>
+                zone.MonsterPets.Values.Where(m => m is { IsDie: false } && m.IdMap != Character.Id).ToList().ForEach(m =>
                 {
                     SendMessage(Service.UpdateMonsterMe0(m));
-                }); 
+                });
             }
 
             zone.MonsterMaps.Where(m => !m.IsDie).ToList().ForEach(m =>
@@ -2040,7 +2045,7 @@ namespace NRO_Server.Application.Handlers.Character
                     SendMessage(Service.SkillEffectMonster(-1, m.IdMap, 1, 41));
                 }
             });
-            
+
             // Xử lý trứng Ma bư, dưa hấu tại đây
             if (Character.InfoChar.ThoiGianTrungMaBu > 0 && Character.InfoChar.MapId - 21 == Character.InfoChar.Gender)
             {
@@ -2048,7 +2053,7 @@ namespace NRO_Server.Application.Handlers.Character
             }
             // Gửi status trứng ma bư qua cmd duahau
         }
-        
+
         public void AddItemToBody(Model.Item.Item item, int index)
         {
             if (item == null) return;
@@ -2057,7 +2062,7 @@ namespace NRO_Server.Application.Handlers.Character
 
             UpdateAntiChangeServerTime();
             Character.Delay.NeedToSaveBody = true;
-            
+
         }
 
         #region ItemBag
@@ -2110,7 +2115,7 @@ namespace NRO_Server.Application.Handlers.Character
                     itemBag.Quantity = quantity;
                     UpdateAntiChangeServerTime(reason);
                     Character.Delay.NeedToSaveBag = true;
-                    
+
                     return true;
                 }
                 else
@@ -2138,13 +2143,13 @@ namespace NRO_Server.Application.Handlers.Character
                         item.IndexUI = index;
                         Character.ItemBag.Add(item);
                     }
-                    
+
                     ServerUtils.WriteLog("additem/" + Character.Id, $"BAG:{Character.Name} add {item.Quantity}x{itemTemplate.Name} lydo: " + reason);
                     UpdateAntiChangeServerTime(reason);
                     Character.Delay.NeedToSaveBag = true;
-                    
-                    if(itemTemplate.Type is 23 or 24) UpdateMountId();
-                    if(itemTemplate.Type == 11) UpdatePhukien();
+
+                    if (itemTemplate.Type is 23 or 24) UpdateMountId();
+                    if (itemTemplate.Type == 11) UpdatePhukien();
                     return true;
                 }
                 else
@@ -2158,7 +2163,7 @@ namespace NRO_Server.Application.Handlers.Character
                 return false;
             }
         }
-        
+
         public void RemoveItemBagById(short id, int quantity, string reason = "")
         {
             var num = 0;
@@ -2175,8 +2180,8 @@ namespace NRO_Server.Application.Handlers.Character
                 num += itemBag.Quantity;
                 RemoveItemBagByIndex(itemBag.IndexUI, itemBag.Quantity, false, reason);
                 var itemTemplate = ItemCache.ItemTemplate(itemBag.Id);
-                if(itemTemplate.Type is 23 or 24) UpdateMountId();
-                if(itemTemplate.Type == 11) UpdatePhukien();
+                if (itemTemplate.Type is 23 or 24) UpdateMountId();
+                if (itemTemplate.Type == 11) UpdatePhukien();
             });
             if (lengthOld == Character.ItemBag.Count) return;
             num = 0;
@@ -2188,25 +2193,25 @@ namespace NRO_Server.Application.Handlers.Character
             lock (Character.ItemBag)
             {
                 var itemBag = GetItemBagByIndex(index);
-                if(itemBag == null) return;
+                if (itemBag == null) return;
                 itemBag.Quantity -= quantity;
-                
+
                 if (itemBag.Quantity <= 0) Character.ItemBag.RemoveAll(item => item.IndexUI == index);
 
                 UpdateAntiChangeServerTime(reason);
-                
+
                 Character.Delay.NeedToSaveBag = true;
-                
+
                 var itemTemplate = ItemCache.ItemTemplate(itemBag.Id);
                 ServerUtils.WriteLog("removeitem/" + Character.Id, $"BAG:{Character.Name} remove {quantity}x{itemTemplate.Name} lydo: " + reason);
-                if(itemTemplate.Type == 11) UpdatePhukien();
-                if(itemTemplate.Type is 23 or 24) UpdateMountId();
+                if (itemTemplate.Type == 11) UpdatePhukien();
+                if (itemTemplate.Type is 23 or 24) UpdateMountId();
                 if (!reset || index >= Character.ItemBag.Count) return;
                 {
                     var count = 0;
                     Character.ItemBag.ForEach(item => item.IndexUI = count++);
                 }
-                if(itemTemplate.Type is 23 or 24) UpdateMountId();
+                if (itemTemplate.Type is 23 or 24) UpdateMountId();
             }
         }
 
@@ -2225,11 +2230,11 @@ namespace NRO_Server.Application.Handlers.Character
                 SendMessage(Service.SendBag(Character));
                 var itemTemplate = ItemCache.ItemTemplate(itemBag.Id);
                 ServerUtils.WriteLog("removeitem/" + Character.Id, $"BAG:{Character.Name} remove {itemTemplate.Name} lydo: " + reason);
-                if(itemTemplate.Type is 23 or 24) UpdateMountId();
-                if(itemTemplate.Type == 11) UpdatePhukien();
+                if (itemTemplate.Type is 23 or 24) UpdateMountId();
+                if (itemTemplate.Type == 11) UpdatePhukien();
                 UpdateAntiChangeServerTime(reason);
                 Character.Delay.NeedToSaveBag = true;
-                
+
             }
             return itemBag;
         }
@@ -2258,7 +2263,7 @@ namespace NRO_Server.Application.Handlers.Character
                     itemBox.Quantity = quantity;
                     UpdateAntiChangeServerTime();
                     Character.Delay.NeedToSaveBox = true;
-                    
+
                     return true;
                 }
                 else
@@ -2287,7 +2292,7 @@ namespace NRO_Server.Application.Handlers.Character
                     }
                     UpdateAntiChangeServerTime();
                     Character.Delay.NeedToSaveBox = true;
-                    
+
                     return true;
                 }
                 else
@@ -2318,7 +2323,7 @@ namespace NRO_Server.Application.Handlers.Character
         public void RemoveMonsterMe()
         {
             var skillEgg = Character.InfoSkill.Egg;
-            if (skillEgg.Monster is {IsDie: true})
+            if (skillEgg.Monster is { IsDie: true })
             {
                 SendZoneMessage(Service.UpdateMonsterMe7(skillEgg.Monster.Id));
                 Character.Zone.ZoneHandler.RemoveMonsterMe(skillEgg.Monster.Id);
@@ -2328,10 +2333,10 @@ namespace NRO_Server.Application.Handlers.Character
 
         public void PlusPoint(IMonster monster, int damage)
         {
-            if(monster.Character != null) return;
-            if(damage <= 0) return;
+            if (monster.Character != null) return;
+            if (damage <= 0) return;
             var timeServer = ServerUtils.CurrentTimeMillis();
-            long fixDmg = (long) ((damage) + (monster.OriginalHp * 0.00125));
+            long fixDmg = (long)((damage) + (monster.OriginalHp * 0.00125));
             long damagePlusPoint = fixDmg;
 
             if (Character.InfoChar.Power > DatabaseManager.Manager.gI().LimitPowerExpUp)
@@ -2357,7 +2362,8 @@ namespace NRO_Server.Application.Handlers.Character
                 if (checkLevel > 5 && levelChar > levelMonster)
                 {
                     damagePlusPoint = 1;
-                } else if (levelChar < levelMonster && checkLevel <= 5)
+                }
+                else if (levelChar < levelMonster && checkLevel <= 5)
                 {
                     damagePlusPoint *= (monster.LvBoss * 2 + 2);
                 }
@@ -2375,10 +2381,10 @@ namespace NRO_Server.Application.Handlers.Character
             {
                 case 0: break;
                 case 8:
-                    damagePlusPoint += damagePlusPoint*10/100;
+                    damagePlusPoint += damagePlusPoint * 10 / 100;
                     break;
                 default:
-                    damagePlusPoint += damagePlusPoint*5/100;
+                    damagePlusPoint += damagePlusPoint * 5 / 100;
                     break;
             }
 
@@ -2388,9 +2394,9 @@ namespace NRO_Server.Application.Handlers.Character
                 {
                     damagePlusPoint *= DatabaseManager.Manager.gI().ExpUp;
                 }
-                else 
+                else
                 {
-                    damagePlusPoint *= (DatabaseManager.Manager.gI().ExpUp/2);
+                    damagePlusPoint *= (DatabaseManager.Manager.gI().ExpUp / 2);
                 }
             }
 
@@ -2398,15 +2404,15 @@ namespace NRO_Server.Application.Handlers.Character
             var specialId = Character.SpecialSkill.Id;
             if (specialId != -1 && (specialId == 8 || specialId == 19 || specialId == 29))
             {
-                damagePlusPoint += damagePlusPoint*Character.SpecialSkill.Value/100;
+                damagePlusPoint += damagePlusPoint * Character.SpecialSkill.Value / 100;
             }
             // Option Sao pha lê
             var OptionPhanTramTNSM = Character.InfoOption.PhanTramTNSM;
             if (OptionPhanTramTNSM > 0)
             {
-                damagePlusPoint += damagePlusPoint*OptionPhanTramTNSM/100;
+                damagePlusPoint += damagePlusPoint * OptionPhanTramTNSM / 100;
             }
-            
+
             // // Bùa Trí Tuệ x4
             if (Character.InfoMore.BuaTriTueX4)
             {
@@ -2414,18 +2420,18 @@ namespace NRO_Server.Application.Handlers.Character
                 {
                     damagePlusPoint *= 4;
                 }
-                else 
+                else
                 {
                     Character.InfoMore.BuaTriTueX4 = false;
                 }
-            } 
+            }
             else if (Character.InfoMore.BuaTriTueX3) // Bùa Trí Tuệ x3
             {
                 if (Character.InfoMore.BuaTriTueX3Time > timeServer)
                 {
                     damagePlusPoint *= 3;
                 }
-                else 
+                else
                 {
                     Character.InfoMore.BuaTriTueX3 = false;
                 }
@@ -2437,7 +2443,7 @@ namespace NRO_Server.Application.Handlers.Character
                 {
                     damagePlusPoint *= 2;
                 }
-                else 
+                else
                 {
                     Character.InfoMore.BuaTriTue = false;
                 }
@@ -2447,9 +2453,9 @@ namespace NRO_Server.Application.Handlers.Character
             {
                 if (Character.InfoMore.AuraTriTueTime > timeServer)
                 {
-                    damagePlusPoint += damagePlusPoint*20/100;
+                    damagePlusPoint += damagePlusPoint * 20 / 100;
                 }
-                else 
+                else
                 {
                     Character.InfoMore.IsNearAuraTriTueItem = false;
                 }
@@ -2466,7 +2472,7 @@ namespace NRO_Server.Application.Handlers.Character
 
             foreach (var clanChar in Character.Zone.Characters.Values.ToList().Where(c => c.ClanId != -1 && c.ClanId == Character.ClanId && c.Id != Character.Id))
             {
-                clanChar.CharacterHandler.PlusPoint(0, damagePlusPoint/2, false);
+                clanChar.CharacterHandler.PlusPoint(0, damagePlusPoint / 2, false);
             }
         }
 
@@ -2528,7 +2534,7 @@ namespace NRO_Server.Application.Handlers.Character
             lock (Character)
             {
                 SendZoneMessage(Service.SendTeleport(Character.Id, Character.InfoChar.Teleport));
-                Character.Zone.Map.OutZone(Character, Character.InfoChar.Gender+21);
+                Character.Zone.Map.OutZone(Character, Character.InfoChar.Gender + 21);
                 Character.InfoChar.IsDie = false;
                 Character.InfoChar.Hp = 1;
                 SendMessage(Service.MeLive());
@@ -2551,12 +2557,12 @@ namespace NRO_Server.Application.Handlers.Character
             lock (Character.ItemBox)
             {
                 var itemBox = GetItemBoxByIndex(index);
-                if(itemBox == null) return;
+                if (itemBox == null) return;
                 itemBox.Quantity -= quantity;
                 if (itemBox.Quantity <= 0) Character.ItemBox.RemoveAll(item => item.IndexUI == index);
                 UpdateAntiChangeServerTime();
                 Character.Delay.NeedToSaveBox = true;
-                
+
                 if (!reset || index >= Character.ItemBox.Count) return;
                 {
                     var count = 0;
@@ -2570,7 +2576,7 @@ namespace NRO_Server.Application.Handlers.Character
             lock (Character.ItemBox)
             {
                 var itemBox = Character.ItemBox.FirstOrDefault(item => item.IndexUI == index);
-                if(itemBox == null) return null;
+                if (itemBox == null) return null;
                 Character.ItemBox.RemoveAll(item => item.IndexUI == index);
                 if (isReset && index < Character.ItemBox.Count)
                 {
@@ -2580,17 +2586,17 @@ namespace NRO_Server.Application.Handlers.Character
                 SendMessage(Service.SendBox(Character));
                 UpdateAntiChangeServerTime();
                 Character.Delay.NeedToSaveBox = true;
-                
-                return itemBox; 
+
+                return itemBox;
             }
-            
+
         }
         public Model.Item.Item RemoveItemLuckyBox(int index, bool isReset = true)
         {
             lock (Character.LuckyBox)
             {
                 var itemBox = Character.LuckyBox.FirstOrDefault(item => item.IndexUI == index);
-                if(itemBox == null) return null;
+                if (itemBox == null) return null;
                 Character.LuckyBox.RemoveAll(item => item.IndexUI == index);
                 if (isReset && index < Character.LuckyBox.Count)
                 {
@@ -2599,10 +2605,10 @@ namespace NRO_Server.Application.Handlers.Character
                 }
                 UpdateAntiChangeServerTime();
                 Character.Delay.NeedToSaveLucky = true;
-                
-                return itemBox; 
+
+                return itemBox;
             }
-            
+
         }
         public void MoveMap(short toX, short toY, int type = 0)
         {
@@ -2610,7 +2616,7 @@ namespace NRO_Server.Application.Handlers.Character
             Character.InfoChar.Y = toY;
             if (type == 1)
             {
-                var mpMine = (int) Character.InfoChar.OriginalMp / 100 *
+                var mpMine = (int)Character.InfoChar.OriginalMp / 100 *
                              (Character.InfoSkill.Monkey.MonkeyId > 0 ? 2 : 1);
                 if (Character.InfoChar.Mp > mpMine)
                 {
@@ -2630,18 +2636,18 @@ namespace NRO_Server.Application.Handlers.Character
             var disciple = Character.Disciple;
             if (disciple != null && Character.InfoChar.IsHavePet && !Character.InfoChar.Fusion.IsFusion)
             {
-                if(disciple.Status == 0 || disciple.Status == 1 && Math.Abs(Character.InfoChar.X - disciple.InfoChar.X) > 60 ||disciple.Status == 2 && Math.Abs(Character.InfoChar.X - disciple.InfoChar.X) > 300 || disciple.Status == 3 && Math.Abs(Character.InfoChar.X - disciple.InfoChar.X) > 600)
+                if (disciple.Status == 0 || disciple.Status == 1 && Math.Abs(Character.InfoChar.X - disciple.InfoChar.X) > 60 || disciple.Status == 2 && Math.Abs(Character.InfoChar.X - disciple.InfoChar.X) > 300 || disciple.Status == 3 && Math.Abs(Character.InfoChar.X - disciple.InfoChar.X) > 600)
                 {
-                    Character.Disciple.CharacterHandler.MoveMap(Character.InfoChar.X, Character.InfoChar.Y); 
+                    Character.Disciple.CharacterHandler.MoveMap(Character.InfoChar.X, Character.InfoChar.Y);
                 }
             }
 
             var pet = Character.Pet;
             if (pet != null)
             {
-                if(Math.Abs(Character.InfoChar.X - pet.InfoChar.X) > 60)
+                if (Math.Abs(Character.InfoChar.X - pet.InfoChar.X) > 60)
                 {
-                    Character.Pet.CharacterHandler.MoveMap(Character.InfoChar.X, Character.InfoChar.Y); 
+                    Character.Pet.CharacterHandler.MoveMap(Character.InfoChar.X, Character.InfoChar.Y);
                 }
             }
         }
@@ -2652,7 +2658,7 @@ namespace NRO_Server.Application.Handlers.Character
         {
             lock (Character.InfoChar)
             {
-                if(Character.InfoChar.IsDie) return;
+                if (Character.InfoChar.IsDie) return;
                 Character.InfoChar.Hp += hp;
                 if (Character.InfoChar.Hp >= Character.HpFull) Character.InfoChar.Hp = Character.HpFull;
             }
@@ -2662,13 +2668,13 @@ namespace NRO_Server.Application.Handlers.Character
         {
             lock (Character.InfoChar)
             {
-                if(Character.InfoChar.IsDie || hp <= 0) return;
-                
+                if (Character.InfoChar.IsDie || hp <= 0) return;
+
                 if (hp > Character.InfoChar.Hp)
                 {
                     Character.InfoChar.Hp = 0;
                 }
-                else 
+                else
                 {
                     Character.InfoChar.Hp -= hp;
                 }
@@ -2685,7 +2691,7 @@ namespace NRO_Server.Application.Handlers.Character
         {
             lock (Character.InfoChar)
             {
-                if(Character.InfoChar.IsDie) return;
+                if (Character.InfoChar.IsDie) return;
                 Character.InfoChar.Mp += mp;
                 if (Character.InfoChar.Mp >= Character.MpFull) Character.InfoChar.Mp = Character.MpFull;
             }
@@ -2695,7 +2701,7 @@ namespace NRO_Server.Application.Handlers.Character
         {
             lock (Character.InfoChar)
             {
-                if(Character.InfoChar.IsDie || mp < 0) return;
+                if (Character.InfoChar.IsDie || mp < 0) return;
                 Character.InfoChar.Mp -= mp;
                 if (Character.InfoChar.Mp <= 0) Character.InfoChar.Mp = 0;
             }
@@ -2719,7 +2725,7 @@ namespace NRO_Server.Application.Handlers.Character
                 {
                     return;
                 }
-                else 
+                else
                 {
                     Character.InfoMore.BuaDeoDai = false;
                 }
@@ -2743,7 +2749,7 @@ namespace NRO_Server.Application.Handlers.Character
                 {
                     Character.InfoChar.IsPower = true;
                 }
-                else 
+                else
                 {
                     Character.InfoChar.IsPower = false;
                 }
@@ -2769,7 +2775,7 @@ namespace NRO_Server.Application.Handlers.Character
                 UpdateInfo();
                 UpdateAntiChangeServerTime();
                 Character.Delay.NeedToSaveBody = true;
-                
+
                 if (Character.ItemBody[5] != null) return item;
 
                 SendMessage(Service.SendBody(Character));
@@ -2791,7 +2797,7 @@ namespace NRO_Server.Application.Handlers.Character
         {
             var item = RemoveItemBody(index);
             var zone = MapManager.Get(Character.InfoChar.MapId)?.GetZoneById(Character.InfoChar.ZoneId);
-            if(item == null || zone == null)return;
+            if (item == null || zone == null) return;
             zone.ZoneHandler.LeaveItemMap(new ItemMap()
             {
                 PlayerId = Character.Id,
@@ -2799,14 +2805,14 @@ namespace NRO_Server.Application.Handlers.Character
                 Y = Character.InfoChar.Y,
                 Item = item,
             });
-            
+
         }
 
         public void DropItemBag(int index)
         {
             var item = RemoveItemBag(index, reason: "Vứt vật phẩm");
             var zone = MapManager.Get(Character.InfoChar.MapId)?.GetZoneById(Character.InfoChar.ZoneId);
-            if(item == null || zone == null)return;
+            if (item == null || zone == null) return;
             zone.ZoneHandler.LeaveItemMap(new ItemMap()
             {
                 PlayerId = Character.Id,
@@ -2814,18 +2820,18 @@ namespace NRO_Server.Application.Handlers.Character
                 Y = Character.InfoChar.Y,
                 Item = item,
             });
-            
+
         }
 
         public void PickItemMap(short id)
         {
             try
             {
-                var zone = DataCache.IdMapCustom.Contains(Character.InfoChar.MapId) 
-                    ? MapManager.GetMapCustom(Character.InfoChar.MapCustomId)?.GetMapById(Character.InfoChar.MapId)?.GetZoneById(Character.InfoChar.ZoneId) 
+                var zone = DataCache.IdMapCustom.Contains(Character.InfoChar.MapId)
+                    ? MapManager.GetMapCustom(Character.InfoChar.MapCustomId)?.GetMapById(Character.InfoChar.MapId)?.GetZoneById(Character.InfoChar.ZoneId)
                     : MapManager.Get(Character.InfoChar.MapId)?.GetZoneById(Character.InfoChar.ZoneId);
                 var itemMap = zone?.ItemMaps.Values.FirstOrDefault(item => item.Id == id);
-                if(itemMap == null) return;
+                if (itemMap == null) return;
                 if (itemMap.PlayerId == -2) return;
                 if (itemMap.PlayerId != -1 && itemMap.PlayerId != Character.Id)
                 {
@@ -2842,177 +2848,180 @@ namespace NRO_Server.Application.Handlers.Character
                 lock (zone.ItemMaps)
                 {
                     var itemNew = itemMap.Item;
-                    if(itemNew == null) return;
+                    if (itemNew == null) return;
                     switch (itemNew.Id)
                     {
                         case 516:
-                        {
-                            PlusHp((int)Character.HpFull/10);
-                            PlusMp((int)Character.MpFull/10);
-                            SendMessage(Service.SendHp((int)Character.InfoChar.Hp));
-                            SendMessage(Service.SendMp((int)Character.InfoChar.Mp));
-                            zone.ZoneHandler.SendMessage(Service.PlayerLevel(Character), Character.Id);
-                            zone.ZoneHandler.SendMessage(Service.ItemMapMePick(itemMap.Id, itemNew.Quantity, "a"));
-                            break;
-                        }
+                            {
+                                PlusHp((int)Character.HpFull / 10);
+                                PlusMp((int)Character.MpFull / 10);
+                                SendMessage(Service.SendHp((int)Character.InfoChar.Hp));
+                                SendMessage(Service.SendMp((int)Character.InfoChar.Mp));
+                                zone.ZoneHandler.SendMessage(Service.PlayerLevel(Character), Character.Id);
+                                zone.ZoneHandler.SendMessage(Service.ItemMapMePick(itemMap.Id, itemNew.Quantity, "a"));
+                                break;
+                            }
                         case 74:
-                        {
-                            if(Character.InfoChar.MapId - 21 != Character.InfoChar.Gender) return;
-                            PlusHp((int)Character.HpFull);
-                            PlusMp((int)Character.MpFull);
-                            PlusStamina((int)Character.InfoChar.MaxStamina);
-                            SendMessage(Service.SendHp((int)Character.InfoChar.Hp));
-                            SendMessage(Service.SendMp((int)Character.InfoChar.Mp));
-                            SendMessage(Service.SendStamina(Character.InfoChar.Stamina));
-                            zone.ZoneHandler.SendMessage(Service.PlayerLevel(Character), Character.Id);
-                            zone.ZoneHandler.SendMessage(Service.ItemMapMePick(itemMap.Id, itemNew.Quantity, "a"));
-                            break;
-                        }
+                            {
+                                if (Character.InfoChar.MapId - 21 != Character.InfoChar.Gender) return;
+                                PlusHp((int)Character.HpFull);
+                                PlusMp((int)Character.MpFull);
+                                PlusStamina((int)Character.InfoChar.MaxStamina);
+                                SendMessage(Service.SendHp((int)Character.InfoChar.Hp));
+                                SendMessage(Service.SendMp((int)Character.InfoChar.Mp));
+                                SendMessage(Service.SendStamina(Character.InfoChar.Stamina));
+                                zone.ZoneHandler.SendMessage(Service.PlayerLevel(Character), Character.Id);
+                                zone.ZoneHandler.SendMessage(Service.ItemMapMePick(itemMap.Id, itemNew.Quantity, "a"));
+                                break;
+                            }
                         case 568: //Trứng ma bư
-                        {
-                            if (Character.InfoChar.ThoiGianTrungMaBu > 0)
                             {
-                                SendMessage(Service.ServerMessage(TextServer.gI().DA_CO_TRUNG_MABU));
-                                return;
+                                if (Character.InfoChar.ThoiGianTrungMaBu > 0)
+                                {
+                                    SendMessage(Service.ServerMessage(TextServer.gI().DA_CO_TRUNG_MABU));
+                                    return;
+                                }
+                                Character.InfoChar.ThoiGianTrungMaBu = (DataCache.TRUNG_MA_BU_TIME + ServerUtils.CurrentTimeMillis());
+                                zone.ZoneHandler.SendMessage(Service.ItemMapMePick(itemMap.Id, itemNew.Quantity, "a"));
+                                SendMessage(Service.ServerMessage("Bạn đã nhặt được một quả trứng Ma Bư\nHãy về nhà kiểm tra"));
+                                break;
                             }
-                            Character.InfoChar.ThoiGianTrungMaBu = (DataCache.TRUNG_MA_BU_TIME + ServerUtils.CurrentTimeMillis());
-                            zone.ZoneHandler.SendMessage(Service.ItemMapMePick(itemMap.Id, itemNew.Quantity, "a"));
-                            SendMessage(Service.ServerMessage("Bạn đã nhặt được một quả trứng Ma Bư\nHãy về nhà kiểm tra"));
-                            break;
-                        }
                         case 933:
-                        {
-                            // if(Character.LengthBagNull() < 1) {
-                            //     SendMessage(Service.ServerMessage(TextServer.gI().NOT_ENOUGH_BAG));
-                            //     return;
-                            // }
-                            // mảnh vỡ
-                            var itemManhVoBongTai = Character.CharacterHandler.GetItemBagById(933);
-                            if (itemManhVoBongTai != null) 
                             {
-                                var soLuongManhVoBongTaiHT = itemManhVoBongTai.Options.FirstOrDefault(opt => opt.Id == 31); //Số lượng bông tai
-                                var soLuongManhVoBongTaiDrop = itemNew.Options.FirstOrDefault(opt => opt.Id == 31);
-                                if (soLuongManhVoBongTaiHT != null && soLuongManhVoBongTaiDrop != null)
+                                // if(Character.LengthBagNull() < 1) {
+                                //     SendMessage(Service.ServerMessage(TextServer.gI().NOT_ENOUGH_BAG));
+                                //     return;
+                                // }
+                                // mảnh vỡ
+                                var itemManhVoBongTai = Character.CharacterHandler.GetItemBagById(933);
+                                if (itemManhVoBongTai != null)
                                 {
-                                    soLuongManhVoBongTaiHT.Param += soLuongManhVoBongTaiDrop.Param;
-                                }
-                                else 
-                                {
-                                    soLuongManhVoBongTaiHT.Param += 1;//default
-                                }
-                            }
-                            else 
-                            {
-                                if (!Character.CharacterHandler.AddItemToBag(true, itemNew, "Nhặt từ map")) return;
-                            }
-                            Character.CharacterHandler.SendMessage(Service.SendBag(Character));
-                            SendMessage(Service.ItemMapMePick(itemMap.Id, itemNew.Quantity, TextServer.gI().EMPTY));
-                            break;
-                        }
-                        case 992://nhẫn thời không
-                        {
-                            var itemNhanThoiKhongBag = Character.CharacterHandler.GetItemBagById(992);
-                            var itemNhanThoiKhongBox = Character.CharacterHandler.GetItemBoxById(992);
-                            if (itemNhanThoiKhongBag != null || itemNhanThoiKhongBox != null)
-                            {
-                                SendMessage(Service.ServerMessage("Bạn đã có Nhẫn thời không sai lệch, không thể nhặt thêm"));
-                                return;
-                            }
-                            SendMessage(Service.ItemMapMePick(itemMap.Id, itemNew.Quantity, TextServer.gI().EMPTY));
-                            if(AddItemToBag(false, itemNew, "Nhặt từ map")) SendMessage(Service.SendBag(Character));
-                            else return;
-                            break;
-                        }
-                        case 1049://trứng linh thú
-                        {
-                            var timeServer = ServerUtils.CurrentTimeSecond();
-                            var expireHours = 12;
-                            var expireTime = timeServer + (expireHours*3600);
-                            itemNew.Options.Add(new OptionItem()
-                            {
-                                Id = 211,
-                                Param = expireHours,
-                            });
-                            var optionHiden = itemNew.Options.FirstOrDefault(option => option.Id == 73);
-                            
-                            if (optionHiden != null) 
-                            {
-                                optionHiden.Param = expireTime;
-                            }
-                            else 
-                            {
-                                itemNew.Options.Add(new OptionItem()
-                                {
-                                    Id = 73,
-                                    Param = expireTime,
-                                });
-                            }
-                            SendMessage(Service.ItemMapMePick(itemMap.Id, itemNew.Quantity, TextServer.gI().EMPTY));
-                            if(AddItemToBag(false, itemNew, "Nhặt từ map")) SendMessage(Service.SendBag(Character));
-                            else return;
-
-                            break;
-                        }
-                        default:
-                        {
-                            var itemTemplate = ItemCache.ItemTemplate(itemNew.Id);
-                            var text = TextServer.gI().EMPTY;
-                            switch (itemTemplate.Type)
-                            {
-                                case 9:
-                                {
-                                    Character.PlusGold(itemNew.Quantity);
-                                    // Character.InfoChar.Gold += itemNew.Quantity;
-                                    SendMessage(Service.MeLoadInfo(Character));
-                                    if (itemNew.Quantity > 32767)
+                                    var soLuongManhVoBongTaiHT = itemManhVoBongTai.Options.FirstOrDefault(opt => opt.Id == 31); //Số lượng bông tai
+                                    var soLuongManhVoBongTaiDrop = itemNew.Options.FirstOrDefault(opt => opt.Id == 31);
+                                    if (soLuongManhVoBongTaiHT != null && soLuongManhVoBongTaiDrop != null)
                                     {
-                                        text = "Bạn nhặt được " + ServerUtils.GetMoney(itemNew.Quantity) + " vàng";
-                                    }
-                                    break;
-                                }
-                                case 10: {
-                                    Character.PlusDiamond(itemNew.Quantity);
-                                    
-                                    // Character.InfoChar.Diamond += itemNew.Quantity;
-                                    SendMessage(Service.MeLoadInfo(Character));
-                                    if (itemNew.Quantity > 32767)
-                                    {
-                                        text = "Bạn nhặt được " + ServerUtils.GetMoney(itemNew.Quantity) + " ngọc";
-                                    }
-                                    break;
-                                }
-                                case 34: {
-                                    Character.PlusDiamondLock(itemNew.Quantity);
-                                    // Character.InfoChar.DiamondLock += itemNew.Quantity;
-                                    SendMessage(Service.MeLoadInfo(Character));
-                                    if (itemNew.Quantity > 32767)
-                                    {
-                                        text = "Bạn nhặt được " + ServerUtils.GetMoney(itemNew.Quantity) + " ruby";
-                                    }
-                                    break;
-                                }
-                                default: {
-                                    if (itemTemplate.IsTypeBody() && itemTemplate.Require <= Character.InfoChar.Power && Character.ItemBody[itemTemplate.Type] == null
-                                    && (itemTemplate.Gender == 3 || itemTemplate.Gender == Character.InfoChar.Gender))
-                                    {
-                                       AddItemToBody(itemNew, itemTemplate.Type);
-                                       UpdateInfo();
+                                        soLuongManhVoBongTaiHT.Param += soLuongManhVoBongTaiDrop.Param;
                                     }
                                     else
                                     {
-                                        // if(Character.LengthBagNull() < 1) {
-                                        //     SendMessage(Service.ServerMessage(TextServer.gI().NOT_ENOUGH_BAG));
-                                        //     return;
-                                        // }
-                                        if(AddItemToBag(true, itemNew, "Nhặt từ map")) SendMessage(Service.SendBag(Character));
-                                        else return;
+                                        soLuongManhVoBongTaiHT.Param += 1;//default
                                     }
-                                    break;
-                                }  
+                                }
+                                else
+                                {
+                                    if (!Character.CharacterHandler.AddItemToBag(true, itemNew, "Nhặt từ map")) return;
+                                }
+                                Character.CharacterHandler.SendMessage(Service.SendBag(Character));
+                                SendMessage(Service.ItemMapMePick(itemMap.Id, itemNew.Quantity, TextServer.gI().EMPTY));
+                                break;
                             }
-                            SendMessage(Service.ItemMapMePick(itemMap.Id, itemNew.Quantity, text));
-                            break;
-                        }
+                        case 992://nhẫn thời không
+                            {
+                                var itemNhanThoiKhongBag = Character.CharacterHandler.GetItemBagById(992);
+                                var itemNhanThoiKhongBox = Character.CharacterHandler.GetItemBoxById(992);
+                                if (itemNhanThoiKhongBag != null || itemNhanThoiKhongBox != null)
+                                {
+                                    SendMessage(Service.ServerMessage("Bạn đã có Nhẫn thời không sai lệch, không thể nhặt thêm"));
+                                    return;
+                                }
+                                SendMessage(Service.ItemMapMePick(itemMap.Id, itemNew.Quantity, TextServer.gI().EMPTY));
+                                if (AddItemToBag(false, itemNew, "Nhặt từ map")) SendMessage(Service.SendBag(Character));
+                                else return;
+                                break;
+                            }
+                        case 1049://trứng linh thú
+                            {
+                                var timeServer = ServerUtils.CurrentTimeSecond();
+                                var expireHours = 12;
+                                var expireTime = timeServer + (expireHours * 3600);
+                                itemNew.Options.Add(new OptionItem()
+                                {
+                                    Id = 211,
+                                    Param = expireHours,
+                                });
+                                var optionHiden = itemNew.Options.FirstOrDefault(option => option.Id == 73);
+
+                                if (optionHiden != null)
+                                {
+                                    optionHiden.Param = expireTime;
+                                }
+                                else
+                                {
+                                    itemNew.Options.Add(new OptionItem()
+                                    {
+                                        Id = 73,
+                                        Param = expireTime,
+                                    });
+                                }
+                                SendMessage(Service.ItemMapMePick(itemMap.Id, itemNew.Quantity, TextServer.gI().EMPTY));
+                                if (AddItemToBag(false, itemNew, "Nhặt từ map")) SendMessage(Service.SendBag(Character));
+                                else return;
+
+                                break;
+                            }
+                        default:
+                            {
+                                var itemTemplate = ItemCache.ItemTemplate(itemNew.Id);
+                                var text = TextServer.gI().EMPTY;
+                                switch (itemTemplate.Type)
+                                {
+                                    case 9:
+                                        {
+                                            Character.PlusGold(itemNew.Quantity);
+                                            // Character.InfoChar.Gold += itemNew.Quantity;
+                                            SendMessage(Service.MeLoadInfo(Character));
+                                            if (itemNew.Quantity > 32767)
+                                            {
+                                                text = "Bạn nhặt được " + ServerUtils.GetMoney(itemNew.Quantity) + " vàng";
+                                            }
+                                            break;
+                                        }
+                                    case 10:
+                                        {
+                                            Character.PlusDiamond(itemNew.Quantity);
+
+                                            // Character.InfoChar.Diamond += itemNew.Quantity;
+                                            SendMessage(Service.MeLoadInfo(Character));
+                                            if (itemNew.Quantity > 32767)
+                                            {
+                                                text = "Bạn nhặt được " + ServerUtils.GetMoney(itemNew.Quantity) + " ngọc";
+                                            }
+                                            break;
+                                        }
+                                    case 34:
+                                        {
+                                            Character.PlusDiamondLock(itemNew.Quantity);
+                                            // Character.InfoChar.DiamondLock += itemNew.Quantity;
+                                            SendMessage(Service.MeLoadInfo(Character));
+                                            if (itemNew.Quantity > 32767)
+                                            {
+                                                text = "Bạn nhặt được " + ServerUtils.GetMoney(itemNew.Quantity) + " ruby";
+                                            }
+                                            break;
+                                        }
+                                    default:
+                                        {
+                                            if (itemTemplate.IsTypeBody() && itemTemplate.Require <= Character.InfoChar.Power && Character.ItemBody[itemTemplate.Type] == null
+                                            && (itemTemplate.Gender == 3 || itemTemplate.Gender == Character.InfoChar.Gender))
+                                            {
+                                                AddItemToBody(itemNew, itemTemplate.Type);
+                                                UpdateInfo();
+                                            }
+                                            else
+                                            {
+                                                // if(Character.LengthBagNull() < 1) {
+                                                //     SendMessage(Service.ServerMessage(TextServer.gI().NOT_ENOUGH_BAG));
+                                                //     return;
+                                                // }
+                                                if (AddItemToBag(true, itemNew, "Nhặt từ map")) SendMessage(Service.SendBag(Character));
+                                                else return;
+                                            }
+                                            break;
+                                        }
+                                }
+                                SendMessage(Service.ItemMapMePick(itemMap.Id, itemNew.Quantity, text));
+                                break;
+                            }
                     }
                     // zone.ZoneHandler.SendMessage(Service.ItemMapPlayerPick(itemMap.Id, Character.Id), Character.Id);
                     zone.ZoneHandler.RemoveItemMap(itemMap.Id);
