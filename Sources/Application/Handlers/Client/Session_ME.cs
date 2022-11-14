@@ -431,7 +431,7 @@ namespace NRO_Server.Application.Constants
                                     Message messaged;
                                     _listMessage.TryDequeue(out messaged);
                                     session1.DoSendMessage(messaged);
-                                   // await Task.Delay(1);
+                                    await Task.Delay(1);
                                 }
                             }
                         }

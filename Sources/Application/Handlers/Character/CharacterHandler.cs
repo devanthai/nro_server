@@ -774,14 +774,31 @@ namespace NRO_Server.Application.Handlers.Character
 
             if (Character.InfoChar.OSkill.Count == 0)
             {
-                Character.InfoChar.OSkill = new List<sbyte>() {-1, -1, -1, -1, -1};
+                Character.InfoChar.OSkill = Character.Player.Session.IsNewVersion ? new List<sbyte>() { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 } : new List<sbyte>() { -1, -1, -1, -1, -1 };    
             }
+            else if(Character.InfoChar.OSkill.Count <= 5 && Character.Player.Session.IsNewVersion) //Version mới thì thêm 5 ô skill nữa
+            {
+                Character.InfoChar.OSkill.Add(-1);
+                Character.InfoChar.OSkill.Add(-1);
+                Character.InfoChar.OSkill.Add(-1);
+                Character.InfoChar.OSkill.Add(-1);
+                Character.InfoChar.OSkill.Add(-1);
+            }
+          
 
             if (Character.InfoChar.KSkill.Count == 0)
             {
-                Character.InfoChar.KSkill = new List<sbyte>() {-1, -1, -1, -1, -1};
+                Character.InfoChar.KSkill = Character.Player.Session.IsNewVersion ? new List<sbyte>() { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 } : new List<sbyte>() { -1, -1, -1, -1, -1 };
             }
-            
+            else if (Character.InfoChar.KSkill.Count <= 5 && Character.Player.Session.IsNewVersion) //Version mới thì thêm 5 ô skill nữa
+            {
+                Character.InfoChar.KSkill.Add(-1);
+                Character.InfoChar.KSkill.Add(-1);
+                Character.InfoChar.KSkill.Add(-1);
+                Character.InfoChar.KSkill.Add(-1);
+                Character.InfoChar.KSkill.Add(-1);
+            }
+
             var maxPower = Cache.Gi().LIMIT_POWERS[DataCache.MAX_LIMIT_POWER_LEVEL-1].Power;
             if (Character.InfoChar.Power > maxPower)
             {
